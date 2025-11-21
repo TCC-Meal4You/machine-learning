@@ -1,3 +1,6 @@
 pandas
 fastapi
 uvicorn[standard]
+sqlmodel
+pymysql
+cryptography
