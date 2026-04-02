@@ -4,3 +4,4 @@ uvicorn[standard]
 sqlmodel
 pymysql
 cryptography
+scikit-learn
