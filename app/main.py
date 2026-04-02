@@ -1,8 +1,8 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app.connection import engine
-from app.models.db_models import SQLModel
-from app.api.endpoints import router as api_router
+from connection import engine
+from models.db_models import SQLModel
+from api.endpoints import router as api_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

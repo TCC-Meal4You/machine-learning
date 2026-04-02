@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 from pydantic import BaseModel
 from typing import List
-from app.services.recomendador import rankeia_por_score
-from app.connection import get_session
-from app.services.recomendador import recall_por_restricao
-from app.services.recomendador import rankeia_restaurante
-from app.services.recomendador import rankeia_restaurante_composto
+from services.recomendador import rankeia_por_score
+from connection import get_session
+from services.recomendador import recall_por_restricao
+from services.recomendador import rankeia_restaurante
+from services.recomendador import rankeia_restaurante_composto
 
 # Definindo o Router
 router = APIRouter()

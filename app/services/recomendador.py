@@ -1,6 +1,6 @@
 from sqlmodel import Session, select, col
 from sqlalchemy import func 
-from app.models.db_models import (
+from models.db_models import (
     UsuarioRestricao, 
     IngredienteRestricao, 
     RefeicaoIngrediente, 
