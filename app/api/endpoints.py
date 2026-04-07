@@ -1,28 +1,27 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
-from pydantic import BaseModel
 from typing import List
 from services.recomendador import rankeia_por_score
 from connection import get_session
 from services.recomendador import recall_por_restricao
 from services.recomendador import rankeia_restaurante
 from services.recomendador import rankeia_restaurante_composto
+from schemas import (
+    UserRequestDTO,
+    RecallResponseDTO,
+    RankeiaScoreResponseDTO,
+    RankeiaRestauranteResponseDTO,
+    RankeiaCompostoResponseDTO
+)
 
 # Definindo o Router
 router = APIRouter()
 
-# --- Schemas Pydantic (Entrada e Saída) ---
-class UserRequest(BaseModel):
-    id_usuario: int
-
-class RecomResult(BaseModel):
-    id_refeicoes_candidatas: List[int]
-
 # --- Endpoints ---
 
-@router.post("/recall/filtra_restricoes", response_model=RecomResult)
+@router.post("/recall/filtra_restricoes", response_model=RecallResponseDTO)
 def filtra_restricoes(
-    request: UserRequest, 
+    request: UserRequestDTO, 
     session: Session = Depends(get_session)
 ):
     """
@@ -38,9 +37,9 @@ def filtra_restricoes(
         print(f"Erro no recall: {e}")
         raise HTTPException(status_code=500, detail="Erro interno ao processar filtragem.")
     
-@router.post("/precision/rankeia_score")
+@router.post("/precision/rankeia_score", response_model=RankeiaScoreResponseDTO)
 def rankeia_por_score_endpoint(
-    request: UserRequest,
+    request: UserRequestDTO,
     session: Session = Depends(get_session)
 ):
     """
@@ -57,9 +56,9 @@ def rankeia_por_score_endpoint(
         print("Erro no endpoint rankeia_por_score:", e)
         raise HTTPException(status_code=500, detail="Erro interno ao calcular ranking.")
 
-@router.post("/precision/rankeia_por_compatibilidade_restaurante")
+@router.post("/precision/rankeia_por_compatibilidade_restaurante", response_model=RankeiaRestauranteResponseDTO)
 def endpoint_rankeia_restaurante(
-    request: UserRequest,
+    request: UserRequestDTO,
     session: Session = Depends(get_session)
 ):
     """
@@ -76,9 +75,9 @@ def endpoint_rankeia_restaurante(
         print("Erro no endpoint rankeia_por_compatibilidade_restaurante:", e)
         raise HTTPException(status_code=500, detail="Erro interno ao calcular compatibilidade por restaurante.")  
     
-@router.post("/precision/rankeia_restaurante_composto")
+@router.post("/precision/rankeia_restaurante_composto", response_model=RankeiaCompostoResponseDTO)
 def endpoint_rankeia_restaurante_composto(
-    request: UserRequest,
+    request: UserRequestDTO,
     session: Session = Depends(get_session)
 ):
     try:
