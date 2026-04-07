@@ -4,3 +4,8 @@ uvicorn[standard]
 sqlmodel
 pymysql
 cryptography
+scikit-learn
+
+scalar-fastapi 
+# Library for API testing and DOCS.
+# Run 'uvicorn main:app --reload' and acess: localhost:8000/scalar

@@ -89,7 +89,7 @@ class UsuarioRestricao(SQLModel, table=True):
     id_restricao: int = Field(foreign_key="restricao.id_restricao", primary_key=True)
     id_usuario: int = Field(foreign_key="usuario.id_usuario", primary_key=True)
 
-# --- TABELA CRUCIAL PARA O PASSO 2 (ML Colaborativo) ---
+# --- TABELAS CRUCIAIS PARA O ML ---
 
 class UsuarioAvalia(SQLModel, table=True):
     __tablename__ = "usuario_avalia"
@@ -98,3 +98,25 @@ class UsuarioAvalia(SQLModel, table=True):
     nota: int
     comentario: str = Field(max_length=255)
     data_avaliacao: date
+
+class RefeicaoAvalia(SQLModel, table=True):
+
+    __tablename__ = "refeicao_avalia"
+
+    id_refeicao: int = Field(foreign_key="refeicao.id_refeicao", primary_key=True)
+
+    id_usuario: int = Field(foreign_key="usuario.id_usuario", primary_key=True)
+
+    nota: int
+
+    comentario: str = Field(max_length=255)
+
+    data_avaliacao: date
+
+class RefeicaoFavorito(SQLModel, table=True):
+
+    __tablename__ = "refeicao_favorito"
+
+    id_refeicao: int = Field(foreign_key="refeicao.id_refeicao", primary_key=True)
+
+    id_usuario: int = Field(foreign_key="usuario.id_usuario", primary_key=True)
