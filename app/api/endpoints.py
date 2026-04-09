@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session
 from typing import List
 from services.recomendador import rankeia_por_score
@@ -6,12 +6,14 @@ from connection import get_session
 from services.recomendador import recall_por_restricao
 from services.recomendador import rankeia_restaurante
 from services.recomendador import rankeia_restaurante_composto
+from services.ml.knn_service import get_restaurant_recommendations, get_meal_recommendations
 from schemas import (
     UserRequestDTO,
     RecallResponseDTO,
     RankeiaScoreResponseDTO,
     RankeiaRestauranteResponseDTO,
-    RankeiaCompostoResponseDTO
+    RankeiaCompostoResponseDTO,
+    KNNRecommendationResponseDTO
 )
 
 # Definindo o Router
@@ -93,3 +95,118 @@ def endpoint_rankeia_restaurante_composto(
     except Exception as e:
         print("Erro no rankeia_restaurante_composto:", e)
         raise HTTPException(status_code=500, detail="Erro interno ao calcular ranking composto.")
+
+@router.get("/usuarios/recomendacoes-knn/restaurantes/{id_usuario}", response_model=KNNRecommendationResponseDTO)
+def recomendar_restaurantes_knn(
+    id_usuario: int,
+    min_score: float = Query(3.0, description="Nota mínima média exigida dos vizinhos para classificar um restaurante como recomendado."),
+    session: Session = Depends(get_session)
+):
+    """
+    Endpoint que retorna uma lista de IDs de restaurantes recomendados baseados no perfil do usuário (KNN).
+    
+    Parâmetros:
+    - **id_usuario** (Path Parameter): ID numérico do usuário alvo da recomendação.
+    - **min_score** (Query Parameter): Filtro tolerante de nota (padrão 3.0). Média >= min_score será recomendada.
+    """
+    try:
+        resultado = get_restaurant_recommendations(session, user_id=id_usuario, min_score=min_score)
+        
+        # Cold start fallback (o serviço retorna um dict com a mensagem)
+        if isinstance(resultado, dict) and "message" in resultado:
+            return {"id_usuario": id_usuario, "message": resultado["message"], "recomendacoes": []}
+            
+        return {
+            "id_usuario": id_usuario, 
+            "recomendacoes": resultado,
+            "message": "Recomendações geradas com sucesso."
+        }
+    except Exception as e:
+        print("Erro no recomendar_restaurantes_knn:", e)
+        raise HTTPException(status_code=500, detail="Erro interno ao treinar e recomendar via KNN.")
+
+@router.get("/usuarios/recomendacoes-knn/refeicoes/{id_usuario}", response_model=KNNRecommendationResponseDTO)
+def recomendar_refeicoes_knn(
+    id_usuario: int,
+    min_score: float = Query(3.0, description="Nota mínima média exigida dos vizinhos para classificar uma refeição como recomendada."),
+    session: Session = Depends(get_session)
+):
+    """
+    Endpoint que retorna uma lista de IDs de refeições recomendadas baseadas no perfil do usuário (KNN).
+    Filtra automaticamente as intolerâncias do usuário ativo.
+    
+    Parâmetros:
+    - **id_usuario** (Path Parameter): ID numérico do usuário alvo da recomendação.
+    - **min_score** (Query Parameter): Filtro tolerante de nota (padrão 3.0). Média >= min_score será recomendada.
+    """
+    try:
+        resultado = get_meal_recommendations(session, user_id=id_usuario, min_score=min_score)
+        
+        # Cold start fallback (o serviço retorna um dict com a mensagem)
+        if isinstance(resultado, dict) and "message" in resultado:
+            return {"id_usuario": id_usuario, "message": resultado["message"], "recomendacoes": []}
+            
+        return {
+            "id_usuario": id_usuario, 
+            "recomendacoes": resultado,
+            "message": "Recomendações geradas com sucesso."
+        }
+    except Exception as e:
+        print("Erro no recomendar_refeicoes_knn:", e)
+        raise HTTPException(status_code=500, detail="Erro interno ao treinar e recomendar via KNN.")
+
+
+@router.get("/usuarios/recomendacoes-knn/restaurantes/{id_usuario}", response_model=KNNRecommendationResponseDTO)
+def recomendar_restaurantes_knn(
+    id_usuario: int,
+    session: Session = Depends(get_session)
+):
+    """
+    Endpoint que retorna uma lista de IDs de restaurantes recomendados baseados no perfil do usuário (KNN).
+    
+    A documentação:
+    - **id_usuario** (Path Parameter): ID numérico do usuário alvo da recomendação.
+    """
+    try:
+        resultado = get_restaurant_recommendations(session, user_id=id_usuario)
+        
+        # Cold start fallback (o serviço retorna um dict com a mensagem)
+        if isinstance(resultado, dict) and "message" in resultado:
+            return {"id_usuario": id_usuario, "message": resultado["message"], "recomendacoes": []}
+            
+        return {
+            "id_usuario": id_usuario, 
+            "recomendacoes": resultado,
+            "message": "Recomendações geradas com sucesso."
+        }
+    except Exception as e:
+        print("Erro no recomendar_restaurantes_knn:", e)
+        raise HTTPException(status_code=500, detail="Erro interno ao treinar e recomendar via KNN.")
+
+@router.get("/usuarios/recomendacoes-knn/refeicoes/{id_usuario}", response_model=KNNRecommendationResponseDTO)
+def recomendar_refeicoes_knn(
+    id_usuario: int,
+    session: Session = Depends(get_session)
+):
+    """
+    Endpoint que retorna uma lista de IDs de refeições recomendadas baseadas no perfil do usuário (KNN).
+    Filtra automaticamente as intolerâncias do usuário ativo.
+    
+    A documentação:
+    - **id_usuario** (Path Parameter): ID numérico do usuário alvo da recomendação.
+    """
+    try:
+        resultado = get_meal_recommendations(session, user_id=id_usuario)
+        
+        # Cold start fallback (o serviço retorna um dict com a mensagem)
+        if isinstance(resultado, dict) and "message" in resultado:
+            return {"id_usuario": id_usuario, "message": resultado["message"], "recomendacoes": []}
+            
+        return {
+            "id_usuario": id_usuario, 
+            "recomendacoes": resultado,
+            "message": "Recomendações geradas com sucesso."
+        }
+    except Exception as e:
+        print("Erro no recomendar_refeicoes_knn:", e)
+        raise HTTPException(status_code=500, detail="Erro interno ao treinar e recomendar via KNN.")

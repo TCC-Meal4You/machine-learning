@@ -58,3 +58,10 @@ class RankeiaCompostoResponseDTO(BaseModel):
     id_usuario: int
     total_restaurantes: int
     restaurantes_ranked: List[RestauranteCompostoDTO]
+
+# 5. /usuarios/recomendacoes-knn/...
+class KNNRecommendationResponseDTO(BaseModel):
+    id_usuario: int
+    recomendacoes: Optional[List[int]] = None
+    message: Optional[str] = None
+
