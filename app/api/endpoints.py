@@ -96,6 +96,8 @@ def endpoint_rankeia_restaurante_composto(
         print("Erro no rankeia_restaurante_composto:", e)
         raise HTTPException(status_code=500, detail="Erro interno ao calcular ranking composto.")
 
+# ------------------------------------ KNN abaixo ------------------------------------
+
 @router.get("/usuarios/recomendacoes-knn/restaurantes/{id_usuario}", response_model=KNNRecommendationResponseDTO)
 def recomendar_restaurantes_knn(
     id_usuario: int,
