@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session
 from typing import List
-from services.recomendador import rankeia_por_score
-from connection import get_session
-from services.recomendador import recall_por_restricao
-from services.recomendador import rankeia_restaurante
-from services.recomendador import rankeia_restaurante_composto
-from services.ml.knn_service import get_restaurant_recommendations, get_meal_recommendations
-from schemas import (
+from app.services.recomendador import rankeia_por_score
+from app.connection import get_session
+from app.services.recomendador import recall_por_restricao
+from app.services.recomendador import rankeia_restaurante
+from app.services.recomendador import rankeia_restaurante_composto
+from app.services.ml.knn_service import get_restaurant_recommendations, get_meal_recommendations
+from app.schemas import (
     UserRequestDTO,
     RecallResponseDTO,
     RankeiaScoreResponseDTO,
