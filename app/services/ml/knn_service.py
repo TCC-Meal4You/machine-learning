@@ -1,10 +1,10 @@
 from sqlmodel import Session, select, col
-from models.db_models import (
+from app.models.db_models import (
     UsuarioAvalia, RefeicaoAvalia, UsuarioRestricao,
     IngredienteRestricao, RefeicaoIngrediente
 )
-from services.ml.pre_pocessing.processor import create_user_restaurant_matrix, create_user_meal_matrix
-from services.ml.recomendador_knn import KNNRecommender
+from app.services.ml.pre_pocessing.processor import create_user_restaurant_matrix, create_user_meal_matrix
+from app.services.ml.recomendador_knn import KNNRecommender
 
 def get_restaurant_recommendations(session: Session, user_id: int, k=16, min_score: float = 3.0):
     """
